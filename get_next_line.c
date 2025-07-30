@@ -6,7 +6,7 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:56 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/28 21:37:25 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/07/29 19:58:02 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,52 @@ char	*get_next_line(int fd)
 {
 	static char	*buffer;
 	char		*tempbuffer;
+	char		*line;
+	char		*sobra;
 	int			iread;
-	char		*str;
-	// int		i;
-	// int		start;
-	// int		end;
 
-	str = NULL;
-	buffer = malloc(BUFFER_SIZE * sizeof(char));
-	tempbuffer = malloc(BUFFER_SIZE * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	// iread = 1;
-	// buffer[iread] = '\0';
-	iread = read(fd, tempbuffer, BUFFER_SIZE);
-	tempbuffer = ft_strjoin(tempbuffer, buffer);
-	printf("%s", tempbuffer);
-	return (buffer);
+	if (buffer == NULL)
+		buffer = ft_strdup("");
+	tempbuffer = malloc(BUFFER_SIZE + 1 * sizeof(char));
+	iread = 1;
+	while (ft_strchr(buffer, '\n') == NULL || iread == 0)
+	{
+		iread = read(fd, tempbuffer, BUFFER_SIZE);
+		tempbuffer[iread] = '\0';
+		if (iread == 0 || iread == -1)
+			break ;
+		buffer = ft_strjoin(buffer, tempbuffer);
+	}
+	free(tempbuffer);
+	while (buffer[iread] != '\n' && buffer[iread])
+		iread++;
+	line = ft_substr(buffer, 0, iread + 1);
+	sobra = ft_substr(buffer, iread + 1, ft_strlen(buffer));
+	buffer = sobra;
+	return (line);
 }
 
 int	main(void)
 {
 	int		fd;
+	char	*line;
 
 	fd = open("arquivo.txt", O_RDONLY);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
+	line = get_next_line(fd);
+	// printf("%s", line);
+	free(line);
+	line = get_next_line(fd);
+	free(line);
+	// printf("%s", line);
+	line = get_next_line(fd);
+	free(line);
+	// printf("%s", line);
+	line = get_next_line(fd);
+	free(line);
+	// printf("%s", line);
+	// line = get_next_line(fd);
+	// printf("%s", line);
+	// line = get_next_line(fd);
+	// line = get_next_line(fd);
 	return (0);
 }
