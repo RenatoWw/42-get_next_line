@@ -6,7 +6,7 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 15:31:39 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/29 17:04:56 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:43:33 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	char	*newstr;
 
 	if (start > ft_strlen(s))
-		return (ft_strdup(""));
+		return (NULL);
 	if (len > ft_strlen(s) - start)
 		len = ft_strlen(s) - start;
 	newstr = malloc(len + 1 * sizeof(char));
@@ -80,19 +80,22 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	while (s2[j])
 		newstr[i++] = s2[j++];
 	newstr[i] = '\0';
+	free((char *)s1);
 	return (newstr);
 }
 
 char	*ft_strchr(const char *s, int c)
 {
-	while (*s)
+	int	i;
+
+	i = 0;
+	while (s[i])
 	{
-		if (*s == (unsigned char) c)
-			return ((char *)s);
-		else
-			s++;
+		if (s[i] == (unsigned char) c)
+			return ((char *)&s[i]);
+		i++;
 	}
-	while (*s == '\0' && (unsigned char) c == '\0')
-		return ((char *)s);
+	if (s[i] == '\0' && c == '\0')
+		return ((char *)&s[i]);
 	return (NULL);
 }

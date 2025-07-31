@@ -6,62 +6,118 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:56 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/29 19:58:02 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/07/30 20:51:50 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+static void	*free_mem(void *p1, void *p2)
 {
-	static char	*buffer;
-	char		*tempbuffer;
-	char		*line;
-	char		*sobra;
-	int			iread;
+	free(p1);
+	free(p2);
+	return (NULL);
+}
 
-	if (buffer == NULL)
-		buffer = ft_strdup("");
-	tempbuffer = malloc(BUFFER_SIZE + 1 * sizeof(char));
+static char	*read_buffer(int fd, char *buffer)
+{
+	char	*temp_buffer;
+	int		iread;
+
+	temp_buffer = malloc(BUFFER_SIZE + 1 * sizeof(char));
+	if (!temp_buffer || !buffer)
+		return (NULL);
 	iread = 1;
-	while (ft_strchr(buffer, '\n') == NULL || iread == 0)
+	while (ft_strchr(buffer, '\n') == NULL && iread > 0)
 	{
-		iread = read(fd, tempbuffer, BUFFER_SIZE);
-		tempbuffer[iread] = '\0';
-		if (iread == 0 || iread == -1)
-			break ;
-		buffer = ft_strjoin(buffer, tempbuffer);
+		iread = read(fd, temp_buffer, BUFFER_SIZE);
+		if (iread == -1)
+			return (free_mem(temp_buffer, buffer));
+		temp_buffer[iread] = '\0';
+		buffer = ft_strjoin(buffer, temp_buffer);
+		if (!buffer)
+			return (free_mem(temp_buffer, buffer));
 	}
-	free(tempbuffer);
-	while (buffer[iread] != '\n' && buffer[iread])
-		iread++;
-	line = ft_substr(buffer, 0, iread + 1);
-	sobra = ft_substr(buffer, iread + 1, ft_strlen(buffer));
-	buffer = sobra;
+	free(temp_buffer);
+	return (buffer);
+}
+
+static char	*parse_line(char *buffer)
+{
+	char	*line;
+	int		i;
+
+	i = 0;
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	line = ft_substr(buffer, 0, i + 1);
+	if (!line)
+		return (NULL);
 	return (line);
 }
 
-int	main(void)
+static char	*clean_buffer(char *buffer)
 {
-	int		fd;
-	char	*line;
+	char	*leftover;
+	int		i;
 
-	fd = open("arquivo.txt", O_RDONLY);
-	line = get_next_line(fd);
-	// printf("%s", line);
-	free(line);
-	line = get_next_line(fd);
-	free(line);
-	// printf("%s", line);
-	line = get_next_line(fd);
-	free(line);
-	// printf("%s", line);
-	line = get_next_line(fd);
-	free(line);
-	// printf("%s", line);
-	// line = get_next_line(fd);
-	// printf("%s", line);
-	// line = get_next_line(fd);
-	// line = get_next_line(fd);
-	return (0);
+	i = 0;
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	leftover = ft_substr(buffer, i + 1, ft_strlen(buffer) + 1);
+	if (!leftover)
+	{
+		free(leftover);
+		free(buffer);
+		return (NULL);
+	}
+	free(buffer);
+	return (leftover);
 }
+
+char	*get_next_line(int fd)
+{
+	static char	*buffer;
+	char		*line;
+
+	line = NULL;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (buffer == NULL)
+		buffer = ft_strdup("");
+	buffer = read_buffer(fd, buffer);
+	if (buffer == NULL)
+		return (NULL);
+	if (ft_strlen(buffer) == 0)
+	{
+		free(buffer);
+		buffer = NULL;
+		return (NULL);
+	}
+	line = parse_line(buffer);
+	buffer = clean_buffer(buffer);
+	return (line);
+}
+
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+// 	int		i;
+
+// 	fd = open("arquivo.txt", O_RDONLY);
+// 	i = 0;
+// 	line = get_next_line(fd);
+// 	printf("%s", line);
+// 	free(line);
+// 	// line = get_next_line(fd);
+// 	// printf("%s", line);
+// 	// free(line);
+// 	// line = get_next_line(fd);
+// 	// printf("%s", line);
+// 	// free(line);
+// 	// line = get_next_line(fd);
+// 	// printf("%s", line);
+// 	// free(line);
+// 	return (0);
+// }

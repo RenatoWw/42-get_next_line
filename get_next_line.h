@@ -6,7 +6,7 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:35:28 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/29 17:00:34 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/07/30 13:15:38 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,5 @@ size_t	ft_strlen(const char *s1);
 #endif
 
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 4
 #endif
