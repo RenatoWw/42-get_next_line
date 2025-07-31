@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:56 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/30 21:02:50 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:17:47 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static void	*free_mem(void *p1, void *p2)
 {
@@ -77,25 +77,25 @@ static char	*clean_buffer(char *buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[MAX_FD];
 	char		*line;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (buffer == NULL)
-		buffer = ft_strdup("");
-	buffer = read_buffer(fd, buffer);
-	if (buffer == NULL)
+	if (buffer[fd] == NULL)
+		buffer[fd] = ft_strdup("");
+	buffer[fd] = read_buffer(fd, buffer[fd]);
+	if (buffer[fd] == NULL)
 		return (NULL);
-	if (ft_strlen(buffer) == 0)
+	if (ft_strlen(buffer[fd]) == 0)
 	{
-		free(buffer);
-		buffer = NULL;
+		free(buffer[fd]);
+		buffer[fd] = NULL;
 		return (NULL);
 	}
-	line = parse_line(buffer);
-	buffer = clean_buffer(buffer);
+	line = parse_line(buffer[fd]);
+	buffer[fd] = clean_buffer(buffer[fd]);
 	return (line);
 }
 
