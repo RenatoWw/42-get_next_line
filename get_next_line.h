@@ -6,7 +6,7 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:35:28 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/30 21:08:13 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:20:34 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 char	*get_next_line(int fd);
 char	*ft_strchr(const char *s, int c);

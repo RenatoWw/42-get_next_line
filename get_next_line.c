@@ -6,7 +6,7 @@
 /*   By: ranhaia- <ranhaia-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:56 by ranhaia-          #+#    #+#             */
-/*   Updated: 2025/07/30 21:02:50 by ranhaia-         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:27:55 by ranhaia-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,7 @@ static char	*read_buffer(int fd, char *buffer)
 	return (buffer);
 }
 
-static char	*parse_line(char *buffer)
-{
-	char	*line;
-	int		i;
-
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	line = ft_substr(buffer, 0, i + 1);
-	if (!line)
-		return (NULL);
-	return (line);
-}
-
-static char	*clean_buffer(char *buffer)
+static char	*parse_line(char **line, char *buffer)
 {
 	char	*leftover;
 	int		i;
@@ -64,13 +50,12 @@ static char	*clean_buffer(char *buffer)
 	i = 0;
 	while (buffer[i] && buffer[i] != '\n')
 		i++;
-	leftover = ft_substr(buffer, i + 1, ft_strlen(buffer) + 1);
+	*line = ft_substr(buffer, 0, i + 1);
+	if (!*line)
+		return (free_mem(buffer, NULL));
+	leftover = ft_substr(buffer, i + 1, ft_strlen(buffer));
 	if (!leftover)
-	{
-		free(leftover);
-		free(buffer);
-		return (NULL);
-	}
+		return (free_mem(buffer, leftover));
 	free(buffer);
 	return (leftover);
 }
@@ -94,30 +79,26 @@ char	*get_next_line(int fd)
 		buffer = NULL;
 		return (NULL);
 	}
-	line = parse_line(buffer);
-	buffer = clean_buffer(buffer);
+	buffer = parse_line(&line, buffer);
 	return (line);
 }
 
-// int	main(void)
+// int     main(void)
 // {
-// 	int		fd;
-// 	char	*line;
-// 	int		i;
+//         int             fd;
+//         char    *line;
 
-// 	fd = open("arquivo.txt", O_RDONLY);
-// 	i = 0;
-// 	line = get_next_line(fd);
-// 	printf("%s", line);
-// 	free(line);
-// 	// line = get_next_line(fd);
-// 	// printf("%s", line);
-// 	// free(line);
-// 	// line = get_next_line(fd);
-// 	// printf("%s", line);
-// 	// free(line);
-// 	// line = get_next_line(fd);
-// 	// printf("%s", line);
-// 	// free(line);
-// 	return (0);
+//         fd = open("arquivo.txt", O_RDONLY);
+//         if (fd == -1)
+//             return (1);
+//         // Loop para ler todas as linhas do arquivo
+//         while ((line = get_next_line(fd)))
+//         {
+//                 printf("%s", line);
+//                 free(line);
+//         }
+//         // A última chamada a get_next_line retornará NULL
+//         // e o buffer estático interno será liberado.
+//         close(fd);
+//         return (0);
 // }
